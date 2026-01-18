@@ -10,12 +10,7 @@ public final class GameConfig {
     private final DiceMode diceMode;
     private final String description;
 
-    private GameConfig(int boardPositions,
-                       int tailPositions,
-                       EndRule endRule,
-                       HitRule hitRule,
-                       DiceMode diceMode,
-                       String description) {
+    private GameConfig(int boardPositions, int tailPositions, EndRule endRule, HitRule hitRule, DiceMode diceMode, String description) {
         this.boardPositions = boardPositions;
         this.tailPositions = tailPositions;
         this.endRule = endRule;
@@ -62,6 +57,37 @@ public final class GameConfig {
                 DiceMode.ONE_DIE,
                 "Variations: Single Die + Exact End + Forfeit on HIT (" + DiceMode.ONE_DIE.display() + ")"
         );
+    }
+
+    public static GameConfig of(DiceMode diceMode,
+                                boolean exactEndRequired,
+                                boolean forfeitOnHit) {
+        EndRule endRule = exactEndRequired ? new ExactEndRule() : new OvershootAllowedEndRule();
+        HitRule hitRule = forfeitOnHit ? new ForfeitOnHitRule() : new AllowHitRule();
+        String description = buildDescription(diceMode, exactEndRequired, forfeitOnHit);
+        return new GameConfig(
+                18,
+                3,
+                endRule,
+                hitRule,
+                diceMode,
+                description
+        );
+    }
+
+    private static String buildDescription(DiceMode diceMode,
+                                           boolean exactEndRequired,
+                                           boolean forfeitOnHit) {
+        String endText = exactEndRequired ? "exact end (overshoot forfeits)" : "overshoot allowed";
+        String hitText = forfeitOnHit ? "forfeit on HIT" : "hits allowed";
+        boolean isBasic =
+                diceMode == DiceMode.TWO_DICE_TOTAL &&
+                        !exactEndRequired &&
+                        !forfeitOnHit;
+        if (isBasic) {
+            return "Basic Game (" + diceMode.display() + ", " + endText + ", " + hitText + ")";
+        }
+        return "Custom Game (" + diceMode.display() + ", " + endText + ", " + hitText + ")";
     }
 
     public int boardPositions() {

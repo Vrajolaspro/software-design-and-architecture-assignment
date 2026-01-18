@@ -71,10 +71,10 @@ public class ConsoleRunner implements CommandLineRunner {
         // return GameConfig.exactEndTwoPlayer();
         // return GameConfig.exactEndForfeitOnHitTwoPlayer();
         // return GameConfig.singleDieExactEndForfeitOnHitTwoPlayer();
-        // return GameConfig.of(4, DiceMode.TWO_DICE_TOTAL, false, false); // basic-ish 4 player
-        // return GameConfig.of(4, DiceMode.TWO_DICE_TOTAL, true, false);  // exact end
-        // return GameConfig.of(4, DiceMode.TWO_DICE_TOTAL, true, true);   // exact end + forfeit on hit
-        // return GameConfig.of(4, DiceMode.ONE_DIE, true, true);            // single die + exact end + forfeit on hit
+        // return GameConfig.of(4, DiceMode.TWO_DICE_TOTAL, false, false);
+        // return GameConfig.of(4, DiceMode.TWO_DICE_TOTAL, true, false);
+        // return GameConfig.of(4, DiceMode.TWO_DICE_TOTAL, true, true);
+        // return GameConfig.of(4, DiceMode.ONE_DIE, true, true);
     }
 
     private String mainMenu() {

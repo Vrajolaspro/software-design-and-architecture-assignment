@@ -1,7 +1,9 @@
 package software.design.and.architecture.usecase.service;
 
 import org.junit.jupiter.api.Test;
-import software.design.and.architecture.domain.model.*;
+import software.design.and.architecture.domain.model.GameConfig;
+import software.design.and.architecture.domain.model.MoveResult;
+import software.design.and.architecture.domain.model.PlayerColor;
 import software.design.and.architecture.usecase.port.DiceRollSource;
 import software.design.and.architecture.usecase.port.GamePresenter;
 
@@ -14,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class PlayGameUseCaseTest {
 
     @Test
-    void basicScenario_blueWinsIn2Turns_totalTurns4() {
+    void basicScenarioBlueWinsIn2TurnsTotalTurns4() {
         GameConfig config = GameConfig.basicTwoPlayer();
         FakeDice dice = new FakeDice(List.of(12, 12, 7, 8));
         CapturingPresenter presenter = new CapturingPresenter();
@@ -26,7 +28,7 @@ class PlayGameUseCaseTest {
     }
 
     @Test
-    void exactEnd_overshootMeansNoMove_forCurrentPlayer() {
+    void exactEndOvershootMeansNoMoveForCurrentPlayer() {
         GameConfig config = GameConfig.exactEndTwoPlayer();
         FakeDice dice = new FakeDice(List.of(12, 2, 9, 2, 2, 2));
         CapturingPresenter presenter = new CapturingPresenter();
@@ -41,7 +43,7 @@ class PlayGameUseCaseTest {
     }
 
     @Test
-    void forfeitOnHit_preventsMovement_whenDestinationOccupied() {
+    void forfeitOnHitPreventsMovementWhenDestinationOccupied() {
         GameConfig config = GameConfig.exactEndForfeitOnHitTwoPlayer();
         FakeDice dice = new FakeDice(List.of(8, 2, 3, 12, 9, 6));
         CapturingPresenter presenter = new CapturingPresenter();
@@ -59,7 +61,7 @@ class PlayGameUseCaseTest {
     }
 
     @Test
-    void gameEndsWhenNoMoreRolls_noWinnerIsDeclared() {
+    void gameEndsWhenNoMoreRollsNoWinnerIsDeclared() {
         GameConfig config = GameConfig.basicTwoPlayer();
         FakeDice dice = new FakeDice(List.of(12)); // one roll then end
         CapturingPresenter presenter = new CapturingPresenter();

@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ExactEndRuleTest {
 
     @Test
-    void decide_whenOvershoot_shouldNotMove_andShouldFlagOvershoot() {
+    void decideWhenOvershootShouldNotMoveAndShouldFlagOvershoot() {
         ExactEndRule rule = new ExactEndRule();
         int beforeIndex = 19;
         int roll = 5;
@@ -20,7 +20,7 @@ class ExactEndRuleTest {
     }
 
     @Test
-    void decide_whenExactEnd_shouldMove_andReachEnd() {
+    void decideWhenExactEndshouldMoveAndReachEnd() {
         ExactEndRule rule = new ExactEndRule();
         int beforeIndex = 18;
         int roll = 2;
@@ -33,7 +33,7 @@ class ExactEndRuleTest {
     }
 
     @Test
-    void decide_whenNotAtEnd_shouldMove_normally() {
+    void decideWhenNotAtEndShouldMoveNormally() {
         ExactEndRule rule = new ExactEndRule();
         int beforeIndex = 5;
         int roll = 3;

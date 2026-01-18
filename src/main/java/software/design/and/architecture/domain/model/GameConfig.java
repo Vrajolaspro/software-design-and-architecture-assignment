@@ -45,37 +45,20 @@ public final class GameConfig {
         return of(2, diceMode, exactEndRequired, forfeitOnHit);
     }
 
-    public static GameConfig of(int playerCount,
-                                DiceMode diceMode,
-                                boolean exactEndRequired,
-                                boolean forfeitOnHit) {
+    public static GameConfig of(int playerCount, DiceMode diceMode, boolean exactEndRequired, boolean forfeitOnHit) {
         if (playerCount != 2 && playerCount != 4) {
             throw new IllegalArgumentException("playerCount must be 2 or 4");
         }
         EndRule endRule = exactEndRequired ? new ExactEndRule() : new OvershootAllowedEndRule();
         HitRule hitRule = forfeitOnHit ? new ForfeitOnHitRule() : new AllowHitRule();
         String description = buildDescription(playerCount, diceMode, exactEndRequired, forfeitOnHit);
-        return new GameConfig(
-                18,
-                3,
-                playerCount,
-                exactEndRequired,
-                forfeitOnHit,
-                endRule,
-                hitRule,
-                diceMode,
-                description
-        );
+        return new GameConfig(18, 3, playerCount, exactEndRequired, forfeitOnHit, endRule, hitRule, diceMode, description);
     }
 
     private static String buildDescription(int playerCount, DiceMode diceMode, boolean exactEndRequired, boolean forfeitOnHit) {
         String endText = exactEndRequired ? "exact end (overshoot forfeits)" : "overshoot allowed";
         String hitText = forfeitOnHit ? "forfeit on HIT" : "hits allowed";
-        boolean isBasic =
-                playerCount == 2 &&
-                        diceMode == DiceMode.TWO_DICE_TOTAL &&
-                        !exactEndRequired &&
-                        !forfeitOnHit;
+        boolean isBasic = playerCount == 2 && diceMode == DiceMode.TWO_DICE_TOTAL && !exactEndRequired && !forfeitOnHit;
         String type = isBasic ? "Basic Game" : "Custom Game";
         return type + " (" + playerCount + " players, " + diceMode.display() + ", " + endText + ", " + hitText + ")";
     }

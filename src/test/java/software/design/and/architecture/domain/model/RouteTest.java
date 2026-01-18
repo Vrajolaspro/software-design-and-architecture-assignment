@@ -4,24 +4,25 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class RouteTest {
 
     @Test
-    void constructor_rejectsNullPath() {
+    void constructorRejectsNullPath() {
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> new Route(null));
         assertEquals("Route path must not be empty", ex.getMessage());
     }
 
     @Test
-    void constructor_rejectsEmptyPath() {
+    void constructorRejectsEmptyPath() {
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> new Route(List.of()));
         assertEquals("Route path must not be empty", ex.getMessage());
     }
 
     @Test
-    void positionAt_indexLessThanOrEqualZero_returnsFirst() {
+    void positionAtIndexLessThanOrEqualZero_returnsFirst() {
         Route route = new Route(List.of(
                 Position.of("1"),
                 Position.of("2"),
@@ -32,7 +33,7 @@ class RouteTest {
     }
 
     @Test
-    void positionAt_indexGreaterThanOrEqualEnd_returnsLast() {
+    void positionAtIndexGreaterThanOrEqualEnd_returnsLast() {
         Route route = new Route(List.of(
                 Position.of("1"),
                 Position.of("2"),
@@ -43,7 +44,7 @@ class RouteTest {
     }
 
     @Test
-    void positionAt_normalIndex_returnsThatPosition() {
+    void positionAtNormalIndexReturnsThatPosition() {
         Route route = new Route(List.of(
                 Position.of("1"),
                 Position.of("2"),
@@ -55,7 +56,7 @@ class RouteTest {
     }
 
     @Test
-    void endIndex_returnsLastIndex() {
+    void endIndexrReturnsLastIndex() {
         Route route = new Route(List.of(
                 Position.of("1"),
                 Position.of("2"),

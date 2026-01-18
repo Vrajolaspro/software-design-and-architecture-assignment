@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class OvershootAllowedEndRuleTest {
 
     @Test
-    void decide_whenOvershoot_shouldMoveToEnd_andReachEnd() {
+    void decideWhenOvershootShouldMoveToEndAndReachEnd() {
         OvershootAllowedEndRule rule = new OvershootAllowedEndRule();
         int beforeIndex = 19;
         int roll = 5;
@@ -20,7 +20,7 @@ class OvershootAllowedEndRuleTest {
     }
 
     @Test
-    void decide_whenExactEnd_shouldReachEnd_withoutOvershoot() {
+    void decideWhenExactEndShouldReachEndWithoutOvershoot() {
         OvershootAllowedEndRule rule = new OvershootAllowedEndRule();
         int beforeIndex = 18;
         int roll = 2;
@@ -33,7 +33,7 @@ class OvershootAllowedEndRuleTest {
     }
 
     @Test
-    void decide_whenNotAtEnd_shouldMove_normally() {
+    void decideWhenNotAtEndShouldMoveNormally() {
         OvershootAllowedEndRule rule = new OvershootAllowedEndRule();
         int beforeIndex = 5;
         int roll = 3;

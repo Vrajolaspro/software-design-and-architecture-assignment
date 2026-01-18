@@ -3,6 +3,7 @@ package software.design.and.architecture.usecase.service;
 import org.springframework.stereotype.Service;
 import software.design.and.architecture.domain.model.*;
 import software.design.and.architecture.domain.rules.MoveDecision;
+import software.design.and.architecture.usecase.model.GameOutcome;
 import software.design.and.architecture.usecase.port.DiceRollSource;
 import software.design.and.architecture.usecase.port.GamePresenter;
 
@@ -12,6 +13,10 @@ import java.util.*;
 public class PlayGameUseCase {
 
     public void playToCompletion(GameConfig config, DiceRollSource dice, GamePresenter presenter) {
+        playToCompletionWithOutcome(config, dice, presenter);
+    }
+
+    public GameOutcome playToCompletionWithOutcome(GameConfig config, DiceRollSource dice, GamePresenter presenter) {
         Map<PlayerColor, Route> routes = buildRoutes(config);
         Map<PlayerColor, Integer> indices = new EnumMap<>(PlayerColor.class);
         Map<PlayerColor, Integer> turns = new EnumMap<>(PlayerColor.class);
@@ -21,10 +26,10 @@ public class PlayGameUseCase {
         turns.put(PlayerColor.BLUE, 0);
         PlayerColor current = PlayerColor.RED;
         while (true) {
-            OptionalInt maybeRoll = dice.nextRoll(config, current); // <-- CHANGED
+            OptionalInt maybeRoll = dice.nextRoll(config, current);
             if (maybeRoll.isEmpty()) {
                 presenter.showMessage("Game ended (no more rolls).");
-                return;
+                return GameOutcome.notCompleted();
             }
             int roll = maybeRoll.getAsInt();
             Route route = routes.get(current);
@@ -66,16 +71,13 @@ public class PlayGameUseCase {
             if (reachedEnd) {
                 int totalTurns = turns.get(PlayerColor.RED) + turns.get(PlayerColor.BLUE);
                 presenter.showWinner(current, newTurnCount, totalTurns);
-                return;
+                return new GameOutcome(current, newTurnCount, totalTurns, true);
             }
             current = (current == PlayerColor.RED) ? PlayerColor.BLUE : PlayerColor.RED;
         }
     }
 
-    private boolean isHit(PlayerColor mover,
-                          Position destination,
-                          Map<PlayerColor, Route> routes,
-                          Map<PlayerColor, Integer> indices) {
+    private boolean isHit(PlayerColor mover, Position destination, Map<PlayerColor, Route> routes, Map<PlayerColor, Integer> indices) {
         PlayerColor other = (mover == PlayerColor.RED) ? PlayerColor.BLUE : PlayerColor.RED;
         Position otherPos = routes.get(other).positionAt(indices.get(other));
         return destination.equals(otherPos);

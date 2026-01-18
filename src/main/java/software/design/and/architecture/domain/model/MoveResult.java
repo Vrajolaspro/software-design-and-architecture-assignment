@@ -25,14 +25,43 @@ public final class MoveResult {
         this.forfeitedOnHit = forfeitedOnHit;
     }
 
-    public PlayerColor player() { return player; }
-    public int roll() { return roll; }
-    public Position from() { return from; }
-    public Position attemptedTo() { return attemptedTo; }
-    public Position to() { return to; }
-    public boolean hit() { return hit; }
-    public boolean reachedEnd() { return reachedEnd; }
-    public boolean moved() { return moved; }
-    public boolean overshoot() { return overshoot; }
-    public boolean forfeitedOnHit() { return forfeitedOnHit; }
+    public PlayerColor player() {
+        return player;
+    }
+
+    public int roll() {
+        return roll;
+    }
+
+    public Position from() {
+        return from;
+    }
+
+    public Position attemptedTo() {
+        return attemptedTo;
+    }
+
+    public Position to() {
+        return to;
+    }
+
+    public boolean hit() {
+        return hit;
+    }
+
+    public boolean reachedEnd() {
+        return reachedEnd;
+    }
+
+    public boolean moved() {
+        return moved;
+    }
+
+    public boolean overshoot() {
+        return overshoot;
+    }
+
+    public boolean forfeitedOnHit() {
+        return forfeitedOnHit;
+    }
 }

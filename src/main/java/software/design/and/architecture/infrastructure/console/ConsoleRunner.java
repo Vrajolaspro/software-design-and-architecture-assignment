@@ -24,9 +24,11 @@ public class ConsoleRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        GameConfig config = GameConfig.exactEndForfeitOnHitTwoPlayer();
+        GameConfig config = GameConfig.singleDieExactEndForfeitOnHitTwoPlayer();
         presenter.showBanner(config);
-        presenter.showMessage("Enter roll totals as integers (e.g., 2-12). Type 'q' to quit.");
+        presenter.showMessage("Enter roll totals as integers (" +
+                config.diceMode().min() + "-" + config.diceMode().max() +
+                "). Type 'q' to quit.");
         presenter.showMessage("");
         playGameUseCase.playToCompletion(config, diceRollSource, presenter);
     }

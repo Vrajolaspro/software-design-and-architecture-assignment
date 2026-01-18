@@ -7,13 +7,20 @@ public final class GameConfig {
     private final int tailPositions;
     private final EndRule endRule;
     private final HitRule hitRule;
+    private final DiceMode diceMode;
     private final String description;
 
-    private GameConfig(int boardPositions, int tailPositions, EndRule endRule, HitRule hitRule, String description) {
+    private GameConfig(int boardPositions,
+                       int tailPositions,
+                       EndRule endRule,
+                       HitRule hitRule,
+                       DiceMode diceMode,
+                       String description) {
         this.boardPositions = boardPositions;
         this.tailPositions = tailPositions;
         this.endRule = endRule;
         this.hitRule = hitRule;
+        this.diceMode = diceMode;
         this.description = description;
     }
 
@@ -22,7 +29,8 @@ public final class GameConfig {
                 18, 3,
                 new OvershootAllowedEndRule(),
                 new AllowHitRule(),
-                "Basic Game (2 dice totals, overshoot allowed, hits allowed)"
+                DiceMode.TWO_DICE_TOTAL,
+                "Basic Game (" + DiceMode.TWO_DICE_TOTAL.display() + ", overshoot allowed, hits allowed)"
         );
     }
 
@@ -31,7 +39,8 @@ public final class GameConfig {
                 18, 3,
                 new ExactEndRule(),
                 new AllowHitRule(),
-                "Variation: Exact End (overshoot forfeits), hits allowed"
+                DiceMode.TWO_DICE_TOTAL,
+                "Variation: Exact End (" + DiceMode.TWO_DICE_TOTAL.display() + ", overshoot forfeits), hits allowed"
         );
     }
 
@@ -40,7 +49,18 @@ public final class GameConfig {
                 18, 3,
                 new ExactEndRule(),
                 new ForfeitOnHitRule(),
-                "Variations: Exact End + Forfeit on HIT"
+                DiceMode.TWO_DICE_TOTAL,
+                "Variations: Exact End + Forfeit on HIT (" + DiceMode.TWO_DICE_TOTAL.display() + ")"
+        );
+    }
+
+    public static GameConfig singleDieExactEndForfeitOnHitTwoPlayer() {
+        return new GameConfig(
+                18, 3,
+                new ExactEndRule(),
+                new ForfeitOnHitRule(),
+                DiceMode.ONE_DIE,
+                "Variations: Single Die + Exact End + Forfeit on HIT (" + DiceMode.ONE_DIE.display() + ")"
         );
     }
 
@@ -58,6 +78,10 @@ public final class GameConfig {
 
     public HitRule hitRule() {
         return hitRule;
+    }
+
+    public DiceMode diceMode() {
+        return diceMode;
     }
 
     public String description() {

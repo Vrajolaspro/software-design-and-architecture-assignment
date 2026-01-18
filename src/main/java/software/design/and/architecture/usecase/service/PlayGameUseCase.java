@@ -21,7 +21,7 @@ public class PlayGameUseCase {
         turns.put(PlayerColor.BLUE, 0);
         PlayerColor current = PlayerColor.RED;
         while (true) {
-            OptionalInt maybeRoll = dice.nextRoll(current);
+            OptionalInt maybeRoll = dice.nextRoll(config, current); // <-- CHANGED
             if (maybeRoll.isEmpty()) {
                 presenter.showMessage("Game ended (no more rolls).");
                 return;
@@ -72,7 +72,8 @@ public class PlayGameUseCase {
         }
     }
 
-    private boolean isHit(PlayerColor mover, Position destination,
+    private boolean isHit(PlayerColor mover,
+                          Position destination,
                           Map<PlayerColor, Route> routes,
                           Map<PlayerColor, Integer> indices) {
         PlayerColor other = (mover == PlayerColor.RED) ? PlayerColor.BLUE : PlayerColor.RED;

@@ -1,4 +1,3 @@
-// FILE: src/test/java/software/design/and/architecture/domain/model/PositionTest.java
 package software.design.and.architecture.domain.model;
 
 import org.junit.jupiter.api.Test;

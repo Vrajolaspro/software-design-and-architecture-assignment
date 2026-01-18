@@ -1,4 +1,3 @@
-// FILE: src/test/java/software/design/and/architecture/usecase/service/PlayGameUseCaseTest.java
 package software.design.and.architecture.usecase.service;
 
 import org.junit.jupiter.api.Test;

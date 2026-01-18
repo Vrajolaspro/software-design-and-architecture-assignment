@@ -2,6 +2,7 @@ package software.design.and.architecture.usecase.service;
 
 import org.springframework.stereotype.Service;
 import software.design.and.architecture.domain.model.*;
+import software.design.and.architecture.domain.rules.MoveDecision;
 import software.design.and.architecture.usecase.port.DiceRollSource;
 import software.design.and.architecture.usecase.port.GamePresenter;
 
@@ -30,18 +31,27 @@ public class PlayGameUseCase {
             int beforeIndex = indices.get(current);
             Position from = route.positionAt(beforeIndex);
             int endIndex = route.endIndex();
-            int afterIndex = beforeIndex + roll;
-            if (afterIndex > endIndex) {
-                afterIndex = endIndex;
-            }
+            MoveDecision decision = config.endRule().decide(beforeIndex, roll, endIndex);
+            int afterIndex = decision.afterIndex();
             Position to = route.positionAt(afterIndex);
             boolean hit = isHit(current, to, routes, indices);
             indices.put(current, afterIndex);
             int newTurnCount = turns.get(current) + 1;
             turns.put(current, newTurnCount);
-            boolean reachedEnd = afterIndex == endIndex;
-            presenter.showTurn(new MoveResult(current, roll, from, to, hit, reachedEnd), newTurnCount);
-            if (reachedEnd) {
+            presenter.showTurn(
+                    new MoveResult(
+                            current,
+                            roll,
+                            from,
+                            to,
+                            hit,
+                            decision.reachedEnd(),
+                            decision.moved(),
+                            decision.overshoot()
+                    ),
+                    newTurnCount
+            );
+            if (decision.reachedEnd()) {
                 int totalTurns = turns.get(PlayerColor.RED) + turns.get(PlayerColor.BLUE);
                 presenter.showWinner(current, newTurnCount, totalTurns);
                 return;

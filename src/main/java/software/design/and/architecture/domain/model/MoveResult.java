@@ -7,14 +7,25 @@ public final class MoveResult {
     private final Position to;
     private final boolean hit;
     private final boolean reachedEnd;
+    private final boolean moved;
+    private final boolean overshoot;
 
-    public MoveResult(PlayerColor player, int roll, Position from, Position to, boolean hit, boolean reachedEnd) {
+    public MoveResult(PlayerColor player,
+                      int roll,
+                      Position from,
+                      Position to,
+                      boolean hit,
+                      boolean reachedEnd,
+                      boolean moved,
+                      boolean overshoot) {
         this.player = player;
         this.roll = roll;
         this.from = from;
         this.to = to;
         this.hit = hit;
         this.reachedEnd = reachedEnd;
+        this.moved = moved;
+        this.overshoot = overshoot;
     }
 
     public PlayerColor player() {
@@ -39,5 +50,13 @@ public final class MoveResult {
 
     public boolean reachedEnd() {
         return reachedEnd;
+    }
+
+    public boolean moved() {
+        return moved;
+    }
+
+    public boolean overshoot() {
+        return overshoot;
     }
 }

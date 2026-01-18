@@ -23,10 +23,18 @@ public class ConsoleGamePresenter implements GamePresenter {
     public void showTurn(MoveResult move, int playerTurnCount) {
         String player = move.player().displayName();
         System.out.printf("%s turn %d rolls %d%n", player, playerTurnCount, move.roll());
+        if (move.overshoot() && !move.moved()) {
+            System.out.printf("%s overshoots!%n", player);
+            System.out.printf("%s remains at %s%n", player, formatPosition(move.from(), move.player()));
+            return;
+        }
         if (move.hit()) {
             System.out.printf("%s hit!%n", move.to().label());
         }
-        System.out.printf("%s moves from %s to %s%n", player, formatPosition(move.from(), move.player()), formatPosition(move.to(), move.player()));
+        System.out.printf("%s moves from %s to %s%n",
+                player,
+                formatPosition(move.from(), move.player()),
+                formatPosition(move.to(), move.player()));
         if (move.reachedEnd()) {
             System.out.println();
         }

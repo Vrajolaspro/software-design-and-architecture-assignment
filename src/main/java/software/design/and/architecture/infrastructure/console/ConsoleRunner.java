@@ -24,7 +24,7 @@ public class ConsoleRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        GameConfig config = GameConfig.exactEndTwoPlayer();
+        GameConfig config = GameConfig.exactEndForfeitOnHitTwoPlayer();
         presenter.showBanner(config);
         presenter.showMessage("Enter roll totals as integers (e.g., 2-12). Type 'q' to quit.");
         presenter.showMessage("");

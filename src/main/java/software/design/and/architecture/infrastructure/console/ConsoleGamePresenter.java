@@ -12,10 +12,11 @@ public class ConsoleGamePresenter implements GamePresenter {
 
     @Override
     public void showBanner(GameConfig config) {
-        System.out.println("=== Simple Frustration (Basic Game) ===");
-        System.out.printf("Board positions=%d Tail positions=%d%n", config.boardPositions(), config.tailPositions());
-        System.out.println("HITS are ignored, multiple players can occupy the same position");
-        System.out.println("Player can land on or beyond the END position to win");
+        System.out.println("=== Simple Frustration ===");
+        System.out.println(config.description());
+        System.out.printf("Board positions=%d Tail positions=%d%n",
+                config.boardPositions(),
+                config.tailPositions());
         System.out.println();
     }
 
@@ -29,7 +30,12 @@ public class ConsoleGamePresenter implements GamePresenter {
             return;
         }
         if (move.hit()) {
-            System.out.printf("%s hit!%n", move.to().label());
+            String other = otherPlayer(move.player()).displayName();
+            System.out.printf("%s Position %s hit!%n", other, move.attemptedTo().label());
+        }
+        if (move.forfeitedOnHit()) {
+            System.out.printf("%s remains at %s%n", player, formatPosition(move.from(), move.player()));
+            return;
         }
         System.out.printf("%s moves from %s to %s%n",
                 player,
@@ -49,6 +55,10 @@ public class ConsoleGamePresenter implements GamePresenter {
     @Override
     public void showMessage(String message) {
         System.out.println(message);
+    }
+
+    private PlayerColor otherPlayer(PlayerColor current) {
+        return (current == PlayerColor.RED) ? PlayerColor.BLUE : PlayerColor.RED;
     }
 
     private String formatPosition(Position position, PlayerColor player) {

@@ -33,9 +33,19 @@ public class PlayGameUseCase {
             int endIndex = route.endIndex();
             MoveDecision decision = config.endRule().decide(beforeIndex, roll, endIndex);
             int afterIndex = decision.afterIndex();
-            Position to = route.positionAt(afterIndex);
-            boolean hit = isHit(current, to, routes, indices);
-            indices.put(current, afterIndex);
+            Position attemptedTo = route.positionAt(afterIndex);
+            boolean hit = isHit(current, attemptedTo, routes, indices);
+            boolean forfeitedOnHit = config.hitRule().forfeitOnHit(hit);
+            int finalAfterIndex = afterIndex;
+            Position finalTo = attemptedTo;
+            boolean finalMoved = decision.moved();
+            if (forfeitedOnHit) {
+                finalAfterIndex = beforeIndex;
+                finalTo = from;
+                finalMoved = false;
+            }
+            indices.put(current, finalAfterIndex);
+            boolean reachedEnd = !forfeitedOnHit && decision.reachedEnd();
             int newTurnCount = turns.get(current) + 1;
             turns.put(current, newTurnCount);
             presenter.showTurn(
@@ -43,15 +53,17 @@ public class PlayGameUseCase {
                             current,
                             roll,
                             from,
-                            to,
+                            attemptedTo,
+                            finalTo,
                             hit,
-                            decision.reachedEnd(),
-                            decision.moved(),
-                            decision.overshoot()
+                            reachedEnd,
+                            finalMoved,
+                            decision.overshoot(),
+                            forfeitedOnHit
                     ),
                     newTurnCount
             );
-            if (decision.reachedEnd()) {
+            if (reachedEnd) {
                 int totalTurns = turns.get(PlayerColor.RED) + turns.get(PlayerColor.BLUE);
                 presenter.showWinner(current, newTurnCount, totalTurns);
                 return;
@@ -60,7 +72,9 @@ public class PlayGameUseCase {
         }
     }
 
-    private boolean isHit(PlayerColor mover, Position destination, Map<PlayerColor, Route> routes, Map<PlayerColor, Integer> indices) {
+    private boolean isHit(PlayerColor mover, Position destination,
+                          Map<PlayerColor, Route> routes,
+                          Map<PlayerColor, Integer> indices) {
         PlayerColor other = (mover == PlayerColor.RED) ? PlayerColor.BLUE : PlayerColor.RED;
         Position otherPos = routes.get(other).positionAt(indices.get(other));
         return destination.equals(otherPos);

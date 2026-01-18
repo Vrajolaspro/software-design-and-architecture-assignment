@@ -17,6 +17,7 @@ public class ConsoleRunner implements CommandLineRunner {
     private final GamePresenter presenter;
     private final ConsoleGameConfigSelector configSelector;
     private final Scanner scanner = new Scanner(System.in);
+    private static final boolean TEST_SINGLE_CONFIG = false;
 
     public ConsoleRunner(PlayGameUseCase playGameUseCase, DiceRollSource diceRollSource, GamePresenter presenter, ConsoleGameConfigSelector configSelector) {
         this.playGameUseCase = playGameUseCase;
@@ -27,6 +28,17 @@ public class ConsoleRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        if (TEST_SINGLE_CONFIG) {
+            GameConfig config = testConfig();
+            presenter.showBanner(config);
+            presenter.showMessage("Enter roll totals as integers (" +
+                    config.diceMode().min() + "-" + config.diceMode().max() +
+                    "). Type 'q' to quit.");
+            presenter.showMessage("");
+            playGameUseCase.playToCompletion(config, diceRollSource, presenter);
+            presenter.showMessage("Goodbye.");
+            return;
+        }
         GameConfig config = null;
         while (true) {
             if (config == null) {
@@ -57,6 +69,13 @@ public class ConsoleRunner implements CommandLineRunner {
                 presenter.showMessage("");
             }
         }
+    }
+
+    private GameConfig testConfig() {
+        return GameConfig.basicTwoPlayer();
+        // return GameConfig.exactEndTwoPlayer();
+        // return GameConfig.exactEndForfeitOnHitTwoPlayer();
+        // return GameConfig.singleDieExactEndForfeitOnHitTwoPlayer();
     }
 
     private String askNextAction() {

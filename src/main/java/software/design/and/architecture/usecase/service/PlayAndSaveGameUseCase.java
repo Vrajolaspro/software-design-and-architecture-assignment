@@ -32,13 +32,7 @@ public class PlayAndSaveGameUseCase {
             return Optional.empty();
         }
         List<Integer> rolls = recordingDice.recordedRolls();
-        GameRecord record = new GameRecord(
-                null,
-                Instant.now(),
-                GameConfigSnapshot.from(config),
-                rolls,
-                outcome
-        );
+        GameRecord record = new GameRecord(null, Instant.now(), GameConfigSnapshot.from(config), rolls, outcome);
         String id = gameStore.save(record);
         return Optional.of(id);
     }

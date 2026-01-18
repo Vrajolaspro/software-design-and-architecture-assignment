@@ -14,9 +14,7 @@ public class ConsoleGamePresenter implements GamePresenter {
     public void showBanner(GameConfig config) {
         System.out.println("=== Simple Frustration ===");
         System.out.println(config.description());
-        System.out.printf("Board positions=%d Tail positions=%d%n",
-                config.boardPositions(),
-                config.tailPositions());
+        System.out.printf("Players=%d Board positions=%d Tail positions=%d%n", config.playerCount(), config.boardPositions(), config.tailPositions());
         System.out.println();
     }
 
@@ -30,17 +28,13 @@ public class ConsoleGamePresenter implements GamePresenter {
             return;
         }
         if (move.hit()) {
-            String other = otherPlayer(move.player()).displayName();
-            System.out.printf("%s Position %s hit!%n", other, move.attemptedTo().label());
+            System.out.printf("HIT at position %s!%n", move.attemptedTo().label());
         }
         if (move.forfeitedOnHit()) {
             System.out.printf("%s remains at %s%n", player, formatPosition(move.from(), move.player()));
             return;
         }
-        System.out.printf("%s moves from %s to %s%n",
-                player,
-                formatPosition(move.from(), move.player()),
-                formatPosition(move.to(), move.player()));
+        System.out.printf("%s moves from %s to %s%n", player, formatPosition(move.from(), move.player()), formatPosition(move.to(), move.player()));
         if (move.reachedEnd()) {
             System.out.println();
         }
@@ -57,24 +51,23 @@ public class ConsoleGamePresenter implements GamePresenter {
         System.out.println(message);
     }
 
-    private PlayerColor otherPlayer(PlayerColor current) {
-        return (current == PlayerColor.RED) ? PlayerColor.BLUE : PlayerColor.RED;
-    }
-
     private String formatPosition(Position position, PlayerColor player) {
-        if (player == PlayerColor.RED && position.label().equals("1")) {
-            return "Home (Position 1)";
-        }
-        if (player == PlayerColor.BLUE && position.label().equals("10")) {
-            return "Home (Position 10)";
-        }
-        if (position.label().startsWith("R") || position.label().startsWith("B")) {
-            String tailNum = position.label().substring(1);
-            if (tailNum.equals("3")) {
-                return "End (Position " + position.label() + ")";
+        String label = position.label();
+        if (player == PlayerColor.RED && label.equals("1")) return "Home (Position 1)";
+        if (player == PlayerColor.GREEN && label.equals("6")) return "Home (Position 6)";
+        if (player == PlayerColor.BLUE && label.equals("10")) return "Home (Position 10)";
+        if (player == PlayerColor.YELLOW && label.equals("15")) return "Home (Position 15)";
+        if (label.length() >= 2) {
+            char prefix = label.charAt(0);
+            String num = label.substring(1);
+            boolean isTailPrefix = prefix == 'R' || prefix == 'B' || prefix == 'G' || prefix == 'Y';
+            if (isTailPrefix) {
+                if (num.equals("3")) {
+                    return "End (Position " + label + ")";
+                }
+                return "Tail Position " + label;
             }
-            return "Tail Position " + position.label();
         }
-        return "Position " + position.label();
+        return "Position " + label;
     }
 }

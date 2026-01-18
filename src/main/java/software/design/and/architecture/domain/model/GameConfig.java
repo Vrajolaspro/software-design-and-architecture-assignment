@@ -5,14 +5,20 @@ import software.design.and.architecture.domain.rules.*;
 public final class GameConfig {
     private final int boardPositions;
     private final int tailPositions;
+    private final int playerCount;
+    private final boolean exactEndRequired;
+    private final boolean forfeitOnHit;
     private final EndRule endRule;
     private final HitRule hitRule;
     private final DiceMode diceMode;
     private final String description;
 
-    private GameConfig(int boardPositions, int tailPositions, EndRule endRule, HitRule hitRule, DiceMode diceMode, String description) {
+    private GameConfig(int boardPositions, int tailPositions, int playerCount, boolean exactEndRequired, boolean forfeitOnHit, EndRule endRule, HitRule hitRule, DiceMode diceMode, String description) {
         this.boardPositions = boardPositions;
         this.tailPositions = tailPositions;
+        this.playerCount = playerCount;
+        this.exactEndRequired = exactEndRequired;
+        this.forfeitOnHit = forfeitOnHit;
         this.endRule = endRule;
         this.hitRule = hitRule;
         this.diceMode = diceMode;
@@ -20,54 +26,41 @@ public final class GameConfig {
     }
 
     public static GameConfig basicTwoPlayer() {
-        return new GameConfig(
-                18, 3,
-                new OvershootAllowedEndRule(),
-                new AllowHitRule(),
-                DiceMode.TWO_DICE_TOTAL,
-                "Basic Game (" + DiceMode.TWO_DICE_TOTAL.display() + ", overshoot allowed, hits allowed)"
-        );
+        return of(2, DiceMode.TWO_DICE_TOTAL, false, false);
     }
 
     public static GameConfig exactEndTwoPlayer() {
-        return new GameConfig(
-                18, 3,
-                new ExactEndRule(),
-                new AllowHitRule(),
-                DiceMode.TWO_DICE_TOTAL,
-                "Variation: Exact End (" + DiceMode.TWO_DICE_TOTAL.display() + ", overshoot forfeits), hits allowed"
-        );
+        return of(2, DiceMode.TWO_DICE_TOTAL, true, false);
     }
 
     public static GameConfig exactEndForfeitOnHitTwoPlayer() {
-        return new GameConfig(
-                18, 3,
-                new ExactEndRule(),
-                new ForfeitOnHitRule(),
-                DiceMode.TWO_DICE_TOTAL,
-                "Variations: Exact End + Forfeit on HIT (" + DiceMode.TWO_DICE_TOTAL.display() + ")"
-        );
+        return of(2, DiceMode.TWO_DICE_TOTAL, true, true);
     }
 
     public static GameConfig singleDieExactEndForfeitOnHitTwoPlayer() {
-        return new GameConfig(
-                18, 3,
-                new ExactEndRule(),
-                new ForfeitOnHitRule(),
-                DiceMode.ONE_DIE,
-                "Variations: Single Die + Exact End + Forfeit on HIT (" + DiceMode.ONE_DIE.display() + ")"
-        );
+        return of(2, DiceMode.ONE_DIE, true, true);
     }
 
-    public static GameConfig of(DiceMode diceMode,
+    public static GameConfig of(DiceMode diceMode, boolean exactEndRequired, boolean forfeitOnHit) {
+        return of(2, diceMode, exactEndRequired, forfeitOnHit);
+    }
+
+    public static GameConfig of(int playerCount,
+                                DiceMode diceMode,
                                 boolean exactEndRequired,
                                 boolean forfeitOnHit) {
+        if (playerCount != 2 && playerCount != 4) {
+            throw new IllegalArgumentException("playerCount must be 2 or 4");
+        }
         EndRule endRule = exactEndRequired ? new ExactEndRule() : new OvershootAllowedEndRule();
         HitRule hitRule = forfeitOnHit ? new ForfeitOnHitRule() : new AllowHitRule();
-        String description = buildDescription(diceMode, exactEndRequired, forfeitOnHit);
+        String description = buildDescription(playerCount, diceMode, exactEndRequired, forfeitOnHit);
         return new GameConfig(
                 18,
                 3,
+                playerCount,
+                exactEndRequired,
+                forfeitOnHit,
                 endRule,
                 hitRule,
                 diceMode,
@@ -75,19 +68,16 @@ public final class GameConfig {
         );
     }
 
-    private static String buildDescription(DiceMode diceMode,
-                                           boolean exactEndRequired,
-                                           boolean forfeitOnHit) {
+    private static String buildDescription(int playerCount, DiceMode diceMode, boolean exactEndRequired, boolean forfeitOnHit) {
         String endText = exactEndRequired ? "exact end (overshoot forfeits)" : "overshoot allowed";
         String hitText = forfeitOnHit ? "forfeit on HIT" : "hits allowed";
         boolean isBasic =
-                diceMode == DiceMode.TWO_DICE_TOTAL &&
+                playerCount == 2 &&
+                        diceMode == DiceMode.TWO_DICE_TOTAL &&
                         !exactEndRequired &&
                         !forfeitOnHit;
-        if (isBasic) {
-            return "Basic Game (" + diceMode.display() + ", " + endText + ", " + hitText + ")";
-        }
-        return "Custom Game (" + diceMode.display() + ", " + endText + ", " + hitText + ")";
+        String type = isBasic ? "Basic Game" : "Custom Game";
+        return type + " (" + playerCount + " players, " + diceMode.display() + ", " + endText + ", " + hitText + ")";
     }
 
     public int boardPositions() {
@@ -96,6 +86,18 @@ public final class GameConfig {
 
     public int tailPositions() {
         return tailPositions;
+    }
+
+    public int playerCount() {
+        return playerCount;
+    }
+
+    public boolean exactEndRequired() {
+        return exactEndRequired;
+    }
+
+    public boolean forfeitOnHit() {
+        return forfeitOnHit;
     }
 
     public EndRule endRule() {

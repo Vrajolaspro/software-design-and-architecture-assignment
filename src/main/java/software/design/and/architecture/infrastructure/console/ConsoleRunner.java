@@ -2,6 +2,7 @@ package software.design.and.architecture.infrastructure.console;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import software.design.and.architecture.domain.model.DiceMode;
 import software.design.and.architecture.domain.model.GameConfig;
 import software.design.and.architecture.usecase.port.DiceRollSource;
 import software.design.and.architecture.usecase.port.GamePresenter;
@@ -23,7 +24,7 @@ public class ConsoleRunner implements CommandLineRunner {
     private final ConsoleGameConfigSelector configSelector;
     private final GameStore gameStore;
     private final Scanner scanner = new Scanner(System.in);
-    private static final boolean TEST_SINGLE_CONFIG = true;
+    private static final boolean TEST_SINGLE_CONFIG = false;
 
     public ConsoleRunner(PlayAndSaveGameUseCase playAndSave, ReplayGameUseCase replay, DiceRollSource diceRollSource, GamePresenter presenter, ConsoleGameConfigSelector configSelector, GameStore gameStore) {
         this.playAndSave = playAndSave;
@@ -39,9 +40,7 @@ public class ConsoleRunner implements CommandLineRunner {
         if (TEST_SINGLE_CONFIG) {
             GameConfig config = testConfig();
             presenter.showBanner(config);
-            presenter.showMessage("Enter roll totals as integers (" +
-                    config.diceMode().min() + "-" + config.diceMode().max() +
-                    "). Type 'q' to quit.");
+            presenter.showMessage("Enter roll totals as integers (" + config.diceMode().min() + "-" + config.diceMode().max() + "). Type 'q' to quit.");
             presenter.showMessage("");
             Optional<String> savedId = playAndSave.playAndSave(config, diceRollSource, presenter);
             presenter.showMessage("");
@@ -72,6 +71,10 @@ public class ConsoleRunner implements CommandLineRunner {
         // return GameConfig.exactEndTwoPlayer();
         // return GameConfig.exactEndForfeitOnHitTwoPlayer();
         // return GameConfig.singleDieExactEndForfeitOnHitTwoPlayer();
+        // return GameConfig.of(4, DiceMode.TWO_DICE_TOTAL, false, false); // basic-ish 4 player
+        // return GameConfig.of(4, DiceMode.TWO_DICE_TOTAL, true, false);  // exact end
+        // return GameConfig.of(4, DiceMode.TWO_DICE_TOTAL, true, true);   // exact end + forfeit on hit
+        // return GameConfig.of(4, DiceMode.ONE_DIE, true, true);            // single die + exact end + forfeit on hit
     }
 
     private String mainMenu() {
@@ -91,19 +94,22 @@ public class ConsoleRunner implements CommandLineRunner {
     }
 
     private void playFlow() {
+        Integer playerCount = choosePlayerCount();
+        if (playerCount == null) {
+            presenter.showMessage("Back to menu.\n");
+            return;
+        }
         GameConfig config = null;
         while (true) {
             if (config == null) {
-                config = configSelector.chooseConfig();
+                config = configSelector.chooseConfig(playerCount);
                 if (config == null) {
                     presenter.showMessage("Back to menu.\n");
                     return;
                 }
             }
             presenter.showBanner(config);
-            presenter.showMessage("Enter roll totals as integers (" +
-                    config.diceMode().min() + "-" + config.diceMode().max() +
-                    "). Type 'q' to quit.");
+            presenter.showMessage("Enter roll totals as integers (" + config.diceMode().min() + "-" + config.diceMode().max() + "). Type 'q' to quit.");
             presenter.showMessage("");
             Optional<String> savedId = playAndSave.playAndSave(config, diceRollSource, presenter);
             if (savedId.isPresent()) {
@@ -125,6 +131,17 @@ public class ConsoleRunner implements CommandLineRunner {
                 config = null;
                 presenter.showMessage("");
             }
+        }
+    }
+
+    private Integer choosePlayerCount() {
+        while (true) {
+            System.out.print("Number of players (2/4) or 'q' to cancel: ");
+            String input = scanner.nextLine().trim().toLowerCase();
+            if (input.equals("q")) return null;
+            if (input.equals("2")) return 2;
+            if (input.equals("4")) return 4;
+            System.out.println("Please enter 2, 4, or q.");
         }
     }
 

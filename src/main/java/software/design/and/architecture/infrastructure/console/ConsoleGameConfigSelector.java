@@ -11,8 +11,9 @@ public class ConsoleGameConfigSelector {
 
     private final Scanner scanner = new Scanner(System.in);
 
-    public GameConfig chooseConfig() {
+    public GameConfig chooseConfig(int playerCount) {
         System.out.println("=== Simple Frustration: Setup ===");
+        System.out.println("Players: " + playerCount);
         System.out.println("Choose your variations. Press 'q' at any prompt to quit.\n");
         DiceMode diceMode = chooseDiceMode();
         if (diceMode == null) {
@@ -27,7 +28,7 @@ public class ConsoleGameConfigSelector {
             return null;
         }
         System.out.println();
-        return GameConfig.of(diceMode, exactEnd, forfeitOnHit);
+        return GameConfig.of(playerCount, diceMode, exactEnd, forfeitOnHit);
     }
 
     private DiceMode chooseDiceMode() {
